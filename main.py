@@ -1,6 +1,13 @@
 """
 A bot powered stock sim. currently one stock two bots. can make db for diff bots/stocks
-problems- numbers get too low for stocks available
+problems- stock price can be negative
+
+TODO
+Try to consolidate functions and variables (is previous_day_price really necessary or can i use last of price_plt array?)
+Add a bot that randomly selects buy/sell disrespecting of price
+Make it so that multiple bots of one type can use same function
+Make bots trade simultaneously or randomly selected (randint then if/elif) (multithreading)
+COMMENT STUFF. seriously
 """
 
 # imports
@@ -164,7 +171,7 @@ def next_day():
     stocks_bought_on_previous_day = 0
 
 
-for i in range(1000):
+for i in range(10000):
     print("bot balance " + str(bot_bal))
     print("bot stocks owned " + str(bot_stocks_owned))
     print("total amount of stocks left to buy " + str(amount_of_stocks))
