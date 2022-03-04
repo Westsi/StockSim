@@ -7,6 +7,7 @@ Try to consolidate functions and variables (is previous_day_price really necessa
 Add a bot that randomly selects buy/sell disrespecting of price
 Make it so that multiple bots of one type can use same function
 Make bots trade simultaneously or randomly selected (randint then if/elif) (multithreading)
+Start doing making price vars decimal type (built in, import)
 COMMENT STUFF. seriously
 """
 
@@ -45,7 +46,9 @@ def bot_buy_stock():
     global bot_stocks_owned
     global stocks_bought_on_previous_day
     global stocks_sold_on_previous_day
+    # needs to be int for operations
     for stock in range(int(previous_day_price) - int(current_price)):
+        # to ensure no negative vals
         if amount_of_stocks > 0 and bot_bal > int(current_price):
             amount_of_stocks -= 1
             bot_stocks_owned += 1
@@ -87,13 +90,9 @@ def bot_user():
     elif current_price > previous_day_price:
         for stock in range(int(previous_day_price) - int(current_price)):
             bot_sell_stock()
+
     elif current_price == previous_day_price:
-        for ss in range(bot_stocks_owned):
-            if bot_stocks_owned > 0:
-                amount_of_stocks += 1
-                bot_stocks_owned -= 1
-                bot_bal = bot_bal + int(current_price)
-                stocks_sold_on_previous_day += 1
+        bot_sell_stock()
 
 
 # risky bot
@@ -142,18 +141,18 @@ def risky_bot_user():
     global risky_bot_stocks_owned
     global stocks_bought_on_previous_day
     global stocks_sold_on_previous_day
-    if current_price < previous_day_price:
+
+    if risky_bot_bal < current_price and risky_bot_stocks_owned > 0:
+        risky_bot_sell_stock()
+
+    elif current_price < previous_day_price:
         risky_bot_buy_stock()
 
     elif current_price > previous_day_price:
         risky_bot_sell_stock()
+
     elif current_price == previous_day_price:
-        for ss in range(risky_bot_stocks_owned):
-            if risky_bot_stocks_owned > 0:
-                amount_of_stocks += 1
-                risky_bot_stocks_owned -= 1
-                risky_bot_bal = risky_bot_bal + int(current_price)
-                stocks_sold_on_previous_day += 1
+        risky_bot_sell_stock()
 
 
 def next_day():
@@ -162,16 +161,22 @@ def next_day():
     global stocks_bought_on_previous_day
     global stocks_sold_on_previous_day
 
+    # this needs to be set before because current_price changes in market randomisation
     previous_day_price = current_price
+
+    # randomises market slightly
     for item in range(stocks_sold_on_previous_day):
         current_price -= random.uniform(0.01, 0.05)
     for item in range(stocks_bought_on_previous_day):
         current_price += random.uniform(0.01, 0.05)
+
+    # reset vars
     stocks_sold_on_previous_day = 0
     stocks_bought_on_previous_day = 0
 
 
 for i in range(10000):
+    # print statements mostly for checking, price_history as well.
     print("bot balance " + str(bot_bal))
     print("bot stocks owned " + str(bot_stocks_owned))
     print("total amount of stocks left to buy " + str(amount_of_stocks))
@@ -183,12 +188,16 @@ for i in range(10000):
     print("total amount of stocks left to buy " + str(amount_of_stocks))
     print("current price " + str(current_price))
     print("previous day price " + str(previous_day_price))
+    # function calls
     bot_user()
     risky_bot_user()
+
     print("end of day " + str(i))
     print(" ")
+    # writes price to file
     price_file.write(str(current_price) + "\n")
 
+    # adds necessary vals to plotting arrays
     prices_plt.append(current_price)
     careful_bot_bal_plt.append(bot_bal/100)
     risky_bot_bal_plt.append(risky_bot_bal/1000)
