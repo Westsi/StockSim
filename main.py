@@ -6,7 +6,7 @@ problems- numbers get too high for stocks available, prices loop because of only
 # prices in cents/pennies
 start_price = 10
 amount_of_stocks = 10
-current_price = 900
+current_price = 9
 previous_day_price = start_price
 stocks_bought_on_previous_day = 0
 stocks_sold_on_previous_day = 0
@@ -43,11 +43,13 @@ def bot_sell_stock():
     global bot_stocks_owned
     global stocks_bought_on_previous_day
     global stocks_sold_on_previous_day
-    for stock in range(10):
-        amount_of_stocks += 1
-        bot_stocks_owned -= 1
-        bot_bal = bot_bal + current_price
-        stocks_sold_on_previous_day += 1
+    half_stocks_owned_int = int(bot_stocks_owned/2)
+    for stock in range(half_stocks_owned_int):
+        if bot_stocks_owned > 0:
+            amount_of_stocks += 1
+            bot_stocks_owned -= 1
+            bot_bal = bot_bal + current_price
+            stocks_sold_on_previous_day += 1
 
 
 def bot_user():
@@ -65,11 +67,13 @@ def bot_user():
         for stock in range(previous_day_price - current_price):
             bot_sell_stock()
     elif current_price == previous_day_price:
-        for ss in range(10):
-            amount_of_stocks += 1
-            bot_stocks_owned -= 1
-            bot_bal = bot_bal + current_price
-            stocks_sold_on_previous_day += 1
+        half_stocks_owned_int_same = int(bot_stocks_owned / 2)
+        for ss in range(half_stocks_owned_int_same):
+            if bot_stocks_owned > 0:
+                amount_of_stocks += 1
+                bot_stocks_owned -= 1
+                bot_bal = bot_bal + current_price
+                stocks_sold_on_previous_day += 1
 
 
 def next_day():
@@ -87,11 +91,12 @@ def next_day():
     stocks_bought_on_previous_day = 0
 
 
-for i in range(12):
+for i in range(6):
     print("bot balance " + str(bot_bal))
     print("bot stocks owned " + str(bot_stocks_owned))
     print("total amount of stocks left to buy " + str(amount_of_stocks))
     print("current price " + str(current_price))
+    print("previous day price " + str(previous_day_price))
     bot_user()
     print("end of day " + str(i))
     print(" ")
