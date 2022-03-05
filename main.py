@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 # prices in cents/pennies
 start_price = 10
-amount_of_stocks = 100
+amount_of_stocks = 1000
 current_price = 9
 previous_day_price = start_price
 stocks_bought_on_previous_day = 0
@@ -178,7 +178,7 @@ def random_bot_buy_stock():
     global stocks_sold_on_previous_day
     # needs to be int for operations
     if current_price > 1:
-        for stock in range(random.randint(0, 100)):
+        for stock in range(random.randint(0, 20)):
             # to ensure no negative vals
             if amount_of_stocks > 0 and random_bot_bal > int(current_price) and current_price != 0:
                 amount_of_stocks -= 1
@@ -241,7 +241,8 @@ def next_day():
     stocks_bought_on_previous_day = 0
 
 
-for i in range(1000):
+# range is number of days basically
+for i in range(100):
     # print statements mostly for checking, price_history as well.
     print("bot balance " + str(bot_bal))
     print("bot stocks owned " + str(bot_stocks_owned))
@@ -273,9 +274,9 @@ for i in range(1000):
 
     # adds necessary vals to plotting arrays
     prices_plt.append(current_price)
-    careful_bot_bal_plt.append(bot_bal / 100)
+    careful_bot_bal_plt.append(bot_bal / 1000)
     risky_bot_bal_plt.append(risky_bot_bal / 10000)
-    random_bot_bal_plt.append(random_bot_bal / 1000)
+    random_bot_bal_plt.append(random_bot_bal / 100)
 
     next_day()
 
