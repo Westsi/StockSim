@@ -1,15 +1,11 @@
 """
 A bot powered stock sim. currently one stock two bots. can make db for diff bots/stocks
 All bots right now are short term- buy low sell high between 5 or so days
-problems- stock price can be negative
 
 TODO
-Try to consolidate functions and variables (is previous_day_price really necessary or can i use last of price_plt array?)
-Add a bot that randomly selects buy/sell disrespecting of price
 Make it so that multiple bots of one type can use same function
 Make bots trade simultaneously or randomly selected (randint then if/elif) (multithreading)
 Start doing making price vars decimal type (built in, import)
-COMMENT STUFF. seriously
 """
 
 # imports
@@ -189,6 +185,7 @@ def random_bot_buy_stock():
                 random_bot_stocks_owned += 1
                 random_bot_bal = random_bot_bal - int(current_price)
                 stocks_bought_on_previous_day += 1
+                # just to make sure bot doesn't go broke
             if random_bot_bal < 1000:
                 random_bot_bal += 5000
 
@@ -213,6 +210,7 @@ def random_bot_sell_stock():
 
 
 def random_bot_user():
+    # to simulate 100 random users
     for no in range(100):
         rand_num = random.uniform(0, 1)
         if rand_num > 0.5:
@@ -232,6 +230,7 @@ def next_day():
 
     # randomises market slightly
     for item in range(stocks_sold_on_previous_day):
+        # to stop economic crash
         if not current_price < 1:
             current_price -= random.uniform(0.01, 0.05)
     for item in range(stocks_bought_on_previous_day):
@@ -261,6 +260,7 @@ for i in range(1000):
     print("total amount of stocks left to buy " + str(amount_of_stocks))
     print("current price " + str(current_price))
     print("previous day price " + str(previous_day_price))
+
     # function calls
     bot_user()
     risky_bot_user()
