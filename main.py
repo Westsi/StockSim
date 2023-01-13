@@ -242,7 +242,7 @@ def next_day():
 
 
 # range is number of days basically
-for i in range(100):
+for i in range(1000):
     # print statements mostly for checking, price_history as well.
     print("bot balance " + str(bot_bal))
     print("bot stocks owned " + str(bot_stocks_owned))
