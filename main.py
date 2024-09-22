@@ -12,11 +12,13 @@ Start doing making price vars decimal type (built in, import)
 import random
 import matplotlib.pyplot as plt
 
-NUM_RANDOM_BOTS = 10
+NUM_RANDOM_BOTS = 20
+NUM_STOCKS = 1000000
+STARTBAL = 100
 
 # prices in cents/pennies
 start_price = 10
-amount_of_stocks = 10000
+amount_of_stocks = NUM_STOCKS
 current_price = 9
 previous_day_price = start_price
 stocks_bought_on_previous_day = 0
@@ -37,7 +39,7 @@ price_clear.write("")
 price_clear.close()
 price_file = open("price_history.txt", "a")
 
-bot_bal = 100
+bot_bal = STARTBAL
 bot_stocks_owned = 0
 
 
@@ -106,7 +108,7 @@ def bot_user():
 
 
 # risky bot
-risky_bot_bal = 100
+risky_bot_bal = STARTBAL
 risky_bot_stocks_owned = 0
 
 
@@ -167,7 +169,7 @@ def risky_bot_user():
         risky_bot_sell_stock()
 
 
-random_bots_bal = [10000]*NUM_RANDOM_BOTS
+random_bots_bal = [STARTBAL]*NUM_RANDOM_BOTS
 random_bots_stocks_owned = [0]*NUM_RANDOM_BOTS
 
 
@@ -237,12 +239,18 @@ def next_day():
     previous_day_price = current_price
 
     # randomises market slightly
-    for item in range(stocks_sold_on_previous_day):
-        # to stop economic crash
-        if not current_price < 1:
-            current_price -= random.uniform(0.01, 0.05)
-    for item in range(stocks_bought_on_previous_day):
-        current_price += random.uniform(0.01, 0.05)
+    # for item in range(stocks_sold_on_previous_day):
+    #     # to stop economic crash
+    #     if not current_price < 1:
+    #         current_price /= 1+random.uniform(1/NUM_STOCKS, 5/NUM_STOCKS)
+    # for item in range(stocks_bought_on_previous_day):
+    #     current_price *= 1+random.uniform(1/NUM_STOCKS, 5/NUM_STOCKS)
+    try:
+        bought_sold_ratio = stocks_bought_on_previous_day/stocks_sold_on_previous_day
+    except:
+        bought_sold_ratio = 0
+    current_price *= 1 + random.uniform(-0.01, 0.03)
+    current_price *= 1+bought_sold_ratio/NUM_STOCKS
 
     # reset vars
     stocks_sold_on_previous_day = 0
@@ -250,7 +258,7 @@ def next_day():
 
 
 # range is number of days basically
-for i in range(100):
+for i in range(500):
     # print statements mostly for checking, price_history as well.
     # print("bot balance " + str(bot_bal))
     # print("bot stocks owned " + str(bot_stocks_owned))
@@ -303,10 +311,39 @@ plt.plot(prices_plt)
 plt.plot(careful_bot_bal_plt)
 plt.plot(risky_bot_bal_plt)
 legend = ['prices', 'careful bot', 'risky bot']
+bestboti = 0
+worstboti = 0
+# for i in range(NUM_RANDOM_BOTS):
+#     if max(random_bots_bal_plt[i]) > max(random_bots_bal_plt[bestboti]):
+#         bestboti = i
+#     if min(random_bots_bal_plt[i]) < min(random_bots_bal_plt[worstboti]):
+#         worstboti = i
 for i in range(NUM_RANDOM_BOTS):
-    legend.append('random bot #' + str(i))
-    plt.plot(random_bots_bal_plt[i])
+    if random_bots_bal[i] > random_bots_bal[bestboti]:
+        bestboti = i
+    if random_bots_bal[i] < random_bots_bal[worstboti]:
+        worstboti = i
+legend.append('best random bot #' + str(bestboti))
+plt.plot(random_bots_bal_plt[bestboti])
+legend.append('worst random bot #' + str(worstboti))
+plt.plot(random_bots_bal_plt[worstboti])
+print("careful bot max: ", max(careful_bot_bal_plt))
+print("careful bot end: ", bot_bal)
+print("careful bot profit: ", bot_bal - STARTBAL)
+print("\n")
+print("risky bot max: ", max(risky_bot_bal_plt))
+print("risky bot end: ", risky_bot_bal)
+print("risky bot profit: ", risky_bot_bal - STARTBAL)
+print("\n")
+print("best random bot max: ", max(random_bots_bal_plt[bestboti]))
+print("best random bot end: ", random_bots_bal[bestboti])
+print("best random bot profit: ", random_bots_bal[bestboti] - STARTBAL)
+print("\n")
+print("worst random bot max: ", max(random_bots_bal_plt[worstboti]))
+print("worst random bot end: ", random_bots_bal[worstboti])
+print("worst random bot profit: ", random_bots_bal[worstboti] - STARTBAL)
+print("\n")
 
 plt.legend(legend, loc='best')
-plt.yscale("log")
+# plt.yscale("log")
 plt.show()
